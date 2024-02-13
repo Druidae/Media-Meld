@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <form id='get_info_form' action="" method="post">
+        {% csrf_token %}
+        {{ form.title }}
+        <button type='submit'>Download</button>
+    </form>
+
+    {% if error_message %}
+        <h2>{{ error_message }}</h2>
+    {% endif %}
+
+    {% if video_data %}
+        {% comment %} {{ video_data }} {% endcomment %}
+        <form id="download_form" action="download-video/" method="post">
+            {% csrf_token %}
+            <h2>{{ video_data.title }}</h2>
+            <img src="{{ video_data.thumbnail }}" alt="video preview">
+            <p>Choose video quality:</p>
+            <div class="download_video_block">
+                <select name="select_video">
+                    {% for video_format in video_data.v_formats %}
+                        <option value="{{ video_format.format_id }}">{{ video_format.format_id }}({{ video_format.resolution }})</option>
+                    {% endfor %}
+                    <input type="hidden" name="url" value="{{ video_data.url }}">
+                    <input type="hidden" name="audio" value="{{ video_data.a_format.format_id }}">
+                    <button type="submit">Download</button>
+
+                </select>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
